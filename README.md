@@ -55,11 +55,15 @@ Important: The percent sign (%) character cannot be used in the SQLQuery paramet
 
 For example,
 
+```
 ...WHERE title LIKE CHAR(37) + '{title}' + CHAR(37)
+```
 
-will execute as
+will be interpreted as
 
+```
 ...WHERE title LIKE '%{title}%'
+```
 
 ### Supported Data Types
 
@@ -155,8 +159,8 @@ When used as an output binding, the function passes a dataset (or multiple datas
 
 Two parameters are required for an output binding:
 
-* ConnnectionString: Name of connection string setting (such as "ConnectionString"). The actual connection string should be defined in local.settings.json (if running locally) or Application Settings in the Azure Portal.
-* TableName: Name of the database table to add records to.
+* IConnector&lt;ConnnectionString&gt;: Name of connection string setting (such as "ConnectionString"). The actual connection string should be defined in local.settings.json (if running locally) or Application Settings in the Azure Portal.
+* IConnector&lt;TableName&gt;: Name of the database table to add records to.
 
 ```
 [SQLDatabase(ConnectionString = "ConnectionString", TableName = "Book", SQLQuery = "")] ICollector<DataTable> output,
@@ -166,8 +170,8 @@ Two parameters are required for an output binding:
 
 Your [SQLDatabase] attribute should be followed by a variable, which can be either of these types:
 
-* ICollector&lt;DataTable&gt: a System.Data.DataTable containing a DataRow collection.
-* ICollector&t;string&gt;: a JSON string - a serialized DataTable (actually a fragment, not complete JSON) in the form
+* ICollector<DataTable>: a System.Data.DataTable containing a DataRow collection.
+* ICollector<string>: a JSON string - a serialized DataTable (actually a fragment, not complete JSON) in the form
 ```
 [ { "column1": "value1", "column2": "value2", ... }, { ...record 2...}, ... { ...record N... } ]
 ```
