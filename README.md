@@ -38,6 +38,8 @@ For specific details on parameters, see Input Bindings and Output Bindings.
 
 When used as an input binding, the binding executes a query and passes the result to your function--either as a System.Data.DataTable object or the equivalent JSON string.
 
+![input-graphic](https://davidpallmann.blob.core.windows.net/blog/SqlDbInputBinding.png)
+
 ### Parameters
 
 Two parameters are required for an input binding:
@@ -155,6 +157,10 @@ This is the response:
 ## Output Bindings
 
 When used as an output binding, the function passes a dataset (or multiple datasets) and the binding adds the records to a specified database table. SqlBulkCopy is used for rapid insertion. If any of the records already existed, they are not updated and no error is generated.
+
+![output-graphic](https://davidpallmann.blob.core.windows.net/blog/SqlDbOutputBinding.png)
+
+The binding doesn't perform updates or deletes. For that, you'll need your own function code, for example using .NET's SqlConnection / SqlCommand objects in C#.
 
 ### Parameters
 
