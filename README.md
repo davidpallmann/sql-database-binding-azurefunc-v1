@@ -236,15 +236,15 @@ public static HttpResponseMessage addbook(HttpRequestMessage req,
 
    * In the FunctionApp project in Visual Studio, edit the local.settings.json file and set the ConnectionString value to a connection string for your Books database.
 
-3. Swith to Debug configuration.
+2. Switch to Debug configuration.
 
-4. Make sure **FunctionApp** is the start-up project (if unsure, right-click FunctionApp in Solution Explorer and select Set as Startup Project).
+3. Make sure **FunctionApp** is the start-up project (if unsure, right-click FunctionApp in Solution Explorer and select Set as Startup Project).
 
-5. Press F5 to run.
+4. Press F5 to run.
 
-6. A console window should open, with a lightning bold text logo at the top.
+5. A console window should open, with a lightning bold text logo at the top.
 
-7. Once the function app initializes, you should see "Http Functions" and a list of functions and URLs similar to the following:
+6. Once the function app initializes, you should see "Http Functions" and a list of functions and URLs similar to the following:
 
 
 ```
@@ -261,7 +261,7 @@ Http Functions:
 Debugger listening on [::]:5858
 ```
 
-8. Go to a browser and enter one of the following (be sure to use the base URLs that were displayed in Step 7)
+7. Go to a browser and enter one of the following (be sure to use the base URLs that were displayed in Step 7)
 
 a. Title Search
 
@@ -324,7 +324,7 @@ Post the following body to the addbooks URL http://localhost:7071/api/addbooks
         ]
 ```
 
-New books should have been added, which you can see using the title or author search URLS mentioned earlier. Or, SELECT * FROM Book in SSMS.
+New books should have been added, which you can see using the title or author search URLS mentioned earlier. Or, in SQL Server Management Studio issue thi query: SELECT * FROM Book
 
 ## Adding SQLDatabase Binding To Your FunctionApp Project
 
