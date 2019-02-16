@@ -58,7 +58,7 @@ The [SQLDatabase] attribute should be followed by a variable. This can be either
                  SQLQuery = "SELECT * FROM Book WHERE WHERE Genre={genre)"] string jsonTable,
 ````
 
-### Code Example
+### Code Examples
 
 This example uses an HTTP Trigger and a SQL Database Input Binding that passes in a DataTable object:
 
@@ -111,7 +111,7 @@ public static HttpResponseMessage author(HttpRequestMessage req,
 
 ## Output Binding
 
-An output binding will take the output of your function (a data tableor JSON string) and add records to the specified data table.
+An output binding will take the output of your function (a DataTable object or JSON string) and add records to the specified data table.
 
 Records are added with SqlBulkCopy for high performance. Duplicate keys (records already in the table) are ignored and do not generate an error.
 
@@ -121,17 +121,20 @@ Two parameters must be specified in the binding:
 * ConnectionString: the setting name of your connection string, such as "ConnectionString". The setting and value must be set in your function project's local.settings.json file (when running locally) or in the Azure Portal under Application Settings for your Function App.
 * TableName: the database table to add records to.
 
-```
-[SQLDatabase(ConnectionString = "ConnectionString", TableName = "Book"] ICollector<DataTable> output
-```
 ### Supported Data Types
 
-The [SQLDatabase] attribute should be followed by an output variable that implements the ICollector interface. This can be either ICollector<DataTable> or ICollector<string>:
+The [SQLDatabase] attribute should be followed by an output variable that implements the ICollector interface. This can be either ICollector&lt;DataTable&gt; or ICollector&lt;string&gt;:
 
-ICollector<DataTable>: A System.Data.DataTable object. In your function, create the Data Table object and populate its Rows property wt DataRow objects.
-ICollector<String>: A JSON serialization of a DataTable, im the form [ { "col1":, "value1", "col2":, "value2", ... }, { ...record 2... } ... { ...record N... } ]
-    
-In your C# function code, simply Add items to the output variable:
+* ICollector&lt;DataTable&gt;: A System.Data.DataTable object. In your function, create the Data Table object and populate its Rows property wt DataRow objects.
+* ICollector&lt;String&gt;: A JSON serialization of a DataTable, im the form [ { "col1":, "value1", "col2":, "value2", ... }, { ...record 2... } ... { ...record N... } ]
+
+```
+[SQLDatabase(ConnectionString = "ConnectionString", TableName = "Book"] ICollector<DataTable> output
+
+[SQLDatabase(ConnectionString = "ConnectionString", TableName = "Book"] ICollector<string> output
+```
+
+In your C# function code, simply add one (or more) DataTables to the output variable with its Add method:
 
 ```
     DataTable dataTable = new DataTable() {
@@ -141,7 +144,9 @@ In your C# function code, simply Add items to the output variable:
     output.Add(dataTable);
 ```
 
-### Code Example
+### Code Examples
+
+This example uses an HTTP trigger and a SQL Database Output Binding. A book record is passed in the form of HTTP query parameters (title, author, yr, genre). A data table with one record is created and added to the output variable. After the code below executes the output binding adds the record to the Book table.
 
 ```
 [FunctionName("addbook")]
@@ -175,7 +180,7 @@ public static HttpResponseMessage addbook(HttpRequestMessage req,
 
     output.Add(table);
 
-    return req.CreateResponse(HttpStatusCode.OK, "{ \"success\": \"1\" }");
+    return req.CreateResponse(HttpStatusCode.Created);
 }
 
 ```
