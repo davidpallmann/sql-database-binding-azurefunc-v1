@@ -3,6 +3,8 @@ Azure SQL Database binding for Azure Functions v1. (.NET Framework)
 
 This project adds Input and Output Bindings for Azure SQL Database to Azure Functions v1 (.NET Framework). With it, cloud developers with Azure SQL Database databases can enjoy the same ease-of-use and minimal code in Azure Functions that other binding users enjoy.
 
+For building/running locally/publishing to Azure, see the Deployment section further below.
+
 # Usage
 
 This binding is .NET Framework-based, and therefore is only compatible with v1 Azure Functions, such as C# .NET Framework functions developed in Visual Studio.
@@ -213,4 +215,130 @@ public static HttpResponseMessage addbook(HttpRequestMessage req,
 }
 ```
 
+# Deployment
 
+
+## Building
+
+1. Before working with this code, you should already be set up to use Azure Functions in Visual Studio 2017, with the necessary tools installed (including Tools > Extensions and Updates | Azure Functions and Web Jobs Tools).
+
+2. Once you have downloaded or cloned this repository, open the solution SQLDatabaseExtension.sln in Visual Studio 2017.
+
+3. Build the solution. If you receive any errors that suggest you are missing NuGet packages, try right-clicking the Solution in Solution Explorer and selecting Restore NuGet Packages.
+
+## Running the Included Book Sample
+
+1. If you want to run the included sample, you will need to first do the following:
+a. Create an Azure SQL Database named Books.
+b. In SSMS, connect to the database and run the included script, CreateBookDatabase.sql. This will add a table named Book along with some data records.
+c. In the FunctionApp project in Visual Studio, edit the local.settings.json file and set the ConnectionString value to a connection string for your Books database.
+
+3. Swith to DEbug configuration.
+
+4. Make sure FunctionApp is the start-up project (if insure, right-click FunctionApp in Solution Explorer and select Set as Startup Project).
+
+5. Press F5 to run.
+
+6. A console window should open, with a lightning bold text logo at the top.
+
+7. Once the function app initializes, you should see "Http Functions" and a list of functions and URLs similar to the following:
+
+Http Functions:
+
+        addbook: http://localhost:7071/api/addbook
+
+        addbooks: http://localhost:7071/api/addbooks
+
+        author: http://localhost:7071/api/author
+
+        title: http://localhost:7071/api/title
+
+Debugger listening on [::]:5858
+
+8. Go to a browser and enter one of the following (be sure to use the base URLs that were displayed in Step 7)
+
+a. Title Search
+
+http://localhost:7071/api/title?title=progam should list books with "program" in their title
+http://localhost:7071/api/title?title=world should list books with "world" in their title
+
+b. Author Search
+
+http://localhost:7071/api/author?name=smith should list books written by Cordwainer Smith
+http://localhost:7071/api/author?name=pallmann should list books written by David Pallmann
+
+c. Add a Book
+
+http://localhost:7071/api/addbook?title=My+Binding+Works&author=Me&yr=2019&genre=NonFiction should add a new book title.
+
+d. Add Multiple Books
+
+For this test you will need something capable of sending an HTTP Post, such as Insomnia.
+
+Post the following body to the addbooks URL http://localhost:7071/api/addbooks
+
+       [
+          {
+             "title": "Rendezvous with Rama",
+             "author": "Arthur C. Clarke",
+             "yr": "1973",
+             "genre": "Science Fiction"
+          },
+          {
+             "title": "Childhood's End",
+             "author": "Arthur C. Clarke",
+             "yr": "1953",
+             "genre": "Science Fiction"
+          },
+          {
+             "title": "2001: A Space Odyssey",
+             "author": "Arthur C. Clarke",
+             "yr": "1968",
+             "genre": "Science Fiction"
+          },
+		  {
+             "title": "The Songs of Distant Earth",
+             "author": "Arthur C. Clarke",
+             "yr": "1986",
+             "genre": "Science Fiction"
+          },
+		  {
+             "title": "Imperial Earth",
+             "author": "Arthur C. Clarke",
+             "yr": "1975",
+             "genre": "Science Fiction"
+           },
+		   {
+             "title": "The Sentinel",
+             "author": "Arthur C. Clarke",
+             "yr": "1951",
+             "genre": "Science Fiction"
+           }
+        ]
+
+New books should have been added, which you can see using the title or author search URLS mentioned earlier. Or, SELECT * FROM Book in SSMS.
+
+## Adding SQLDatabase Binding To Your FunctionApp Project
+
+1. Open your Function App solution in Visual Studio
+
+2. Add the SQLDatabaseExtension project to your solution; or add a reference to SQLDatabaseExtension.dll.
+
+3. Add [SqlDatabase] input or output bindings to suit your needs, as described earlier under Usage.
+
+4. Configure your ConnectionString setting in local.settings.json.
+
+5. Test your function locally with the SQLDatabase binding unti your are satisfied.
+
+## Publishing to Azure
+
+1. These instructions assume you already have done the following:
+a. Created an Azure Function in the Azure Portal and set the runtime to v1.
+b. Downloaded a Publishing Profile.
+c. Have added SQLDatabase bindings to your function and tested locally.
+
+2. In the Azure Portal, select your function app and go to Application Settings. Add a ConnectionString setting for your database.
+
+3. Publish your function. 
+
+4. Try testing you function in the cloud.
