@@ -263,21 +263,21 @@ Debugger listening on [::]:5858
 
 7. Go to a browser and enter one of the following (be sure to use the base URLs that were displayed in Step 7)
 
-a. Title Search
+   * Title Search
 
 http://localhost:7071/api/title?title=progam should list books with "program" in their title
 http://localhost:7071/api/title?title=world should list books with "world" in their title
 
-b. Author Search
+   * Author Search
 
 http://localhost:7071/api/author?name=smith should list books written by Cordwainer Smith
 http://localhost:7071/api/author?name=pallmann should list books written by David Pallmann
 
-c. Add a Book
+   * Add a Book
 
 http://localhost:7071/api/addbook?title=My+Binding+Works&author=Me&yr=2019&genre=NonFiction should add a new book title.
 
-d. Add Multiple Books
+   * Add Multiple Books
 
 For this test you will need something capable of sending an HTTP Post, such as Insomnia.
 
