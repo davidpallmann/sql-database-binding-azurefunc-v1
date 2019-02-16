@@ -31,7 +31,7 @@ public static HttpResponseMessage author(HttpRequestMessage req,
 
 ## Input Binding
 
-An input binding will perform a query and pass your function the query results as a DataTable. You can then work with the results by enumerating the DataRow items in the table. Or if you prefer, the data can be passed to your function as a JSON string.
+An input binding will perform a query and pass your function the query results as a DataTable. You can then work with the results by enumerating the DataRow items in the table. Or if you prefer, the data can be passed to your function as a JavaScript string.
 
 ### Parameters
 
@@ -48,14 +48,14 @@ The code example below, if invoked by HTTP with query parameter name=John+Smith 
 The [SQLDatabase] attribute should be followed by a variable. This can be either a DataTable or a string:
 
 * DataTable: A System.Data.DataTable object. To access the data, enumerate the DataRow collection in the Rows property.
-* String: A JSON serialization of the data table, in the form [ { "col1":, "value1", "col2":, "value2", ... }, { ...record 2... } ... { ...record N... } ]
+* String: A JavaScript serialization of the data table, in the form [ { "col1":, "value1", "col2":, "value2", ... }, { ...record 2... } ... { ...record N... } ]
 
 ````
     [SQLDatabase(ConnectionString = "ConnectionString",
                  SQLQuery = "SELECT * FROM Book WHERE Genre={genre}"] DataTable table,
     
     [SQLDatabase(ConnectionString = "ConnectionString",
-                 SQLQuery = "SELECT * FROM Book WHERE WHERE Genre={genre)"] string jsonTable,
+                 SQLQuery = "SELECT * FROM Book WHERE WHERE Genre={genre)"] string jnTable,
 ````
 
 ### Code Examples
@@ -80,7 +80,7 @@ public static HttpResponseMessage author(HttpRequestMessage req,
 {
     log.Info("author|DataTable: C# HTTP trigger function processed a request.");
 
-    // Convert DataTable to JSON string
+    // Convert DataTable to JS string
 
     var objType = JArray.FromObject(table, JsonSerializer.CreateDefault(new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })); //.FirstOrDefault(); // Get the first row            
     var js = objType.ToString();
@@ -88,10 +88,10 @@ public static HttpResponseMessage author(HttpRequestMessage req,
     return req.CreateResponse(HttpStatusCode.OK, "{ Data: " + js + "}");
 }
 ```
-This example uses an HTTP Trigger and a SQL Database Input Binding that passes in a JSON string:
+This example uses an HTTP Trigger and a SQL Database Input Binding that passes in a JavaScript string:
 
 ```
-// JSON edition - input binding passes a JSON string with the query results
+// JS edition - input binding passes a JavaScript string with the query results
 
 [FunctionName("author")]
 public static HttpResponseMessage author(HttpRequestMessage req,
@@ -111,7 +111,7 @@ public static HttpResponseMessage author(HttpRequestMessage req,
 
 ## Output Binding
 
-An output binding will take the output of your function (a DataTable object or JSON string) and add records to the specified data table.
+An output binding will take the output of your function (a DataTable object or JavaScript string) and add records to the specified data table.
 
 Records are added with SqlBulkCopy for high performance. Duplicate keys (records already in the table) are ignored and do not generate an error.
 
@@ -126,7 +126,7 @@ Two parameters must be specified in the binding:
 The [SQLDatabase] attribute should be followed by an output variable that implements the ICollector interface. This can be either ICollector&lt;DataTable&gt; or ICollector&lt;string&gt;:
 
 * ICollector&lt;DataTable&gt;: A System.Data.DataTable object. In your function, create the Data Table object and populate its Rows property wt DataRow objects.
-* ICollector&lt;String&gt;: A JSON serialization of a DataTable, im the form [ { "col1":, "value1", "col2":, "value2", ... }, { ...record 2... } ... { ...record N... } ]
+* ICollector&lt;String&gt;: A JavaScript serialization of a DataTable, im the form [ { "col1":, "value1", "col2":, "value2", ... }, { ...record 2... } ... { ...record N... } ]
 
 ```
 [SQLDatabase(ConnectionString = "ConnectionString", TableName = "Book"] ICollector<DataTable> output
@@ -146,7 +146,7 @@ In your C# function code, simply add one (or more) DataTables to the output vari
 
 ### Code Examples
 
-This example uses an HTTP trigger and a SQL Database Output Binding. A book record is passed in the form of HTTP query parameters (title, author, yr, genre). A data table with one record is created and added to the output variable. After the code below executes the output binding adds the record to the Book table.
+This example uses an HTTP trigger and a SQL Database Output Binding with an output variable of type DataTable. A book record is passed in the form of HTTP query parameters (title, author, yr, genre). A data table with one record is created and added to the output variable. After the code below executes the output binding adds the record to the Book table.
 
 ```
 [FunctionName("addbook")]
@@ -184,3 +184,33 @@ public static HttpResponseMessage addbook(HttpRequestMessage req,
 }
 
 ```
+
+This example uses an HTTP trigger and a SQL Database Output Binding with an output variable of type string. A book record is passed in the form of HTTP query parameters (title, author, yr, genre). A string containing a JavaScript array with one record is created and added to the output variable. After the code below executes the output binding adds the record to the Book table.
+
+```
+/// JS edition - function passes a JavaScript string to the output binding with records to add
+
+[FunctionName("addbook")]
+public static HttpResponseMessage addbook(HttpRequestMessage req,
+    [HttpTrigger] AddBookRequest parameters, 
+    [SQLDatabase(ConnectionString = "ConnectionString",
+                TableName = "Book", SQLQuery = "")] ICollector<string> output, TraceWriter log)
+{
+    // Validate/default parameters
+
+    if (string.IsNullOrEmpty(parameters.title)) parameters.title = "Noname-" + System.Guid.NewGuid().ToString();
+    if (string.IsNullOrEmpty(parameters.author)) parameters.author = null;
+    if (string.IsNullOrEmpty(parameters.yr)) parameters.yr = null;
+    if (string.IsNullOrEmpty(parameters.genre)) parameters.genre = null;
+
+    // Create data table JS for output
+
+    string json = @"[ { ""Title"": """ + parameters.title + @""", ""Author"": """ + parameters.author + @""", ""Yr"": """ + parameters.yr + @""", ""Genre"": """ + parameters.genre + @""" } ]";
+
+    output.Add(json);
+
+    return req.CreateResponse(HttpStatusCode.OK, "{ \"success\": \"1\" }");
+}
+```
+
+
