@@ -82,6 +82,7 @@ Use whichever data type suits your work best.
 
 [SQLDatabase(ConnectionString = "ConnectionString", SQLQuery = "SELECT * FROM Book WHERE Genre={genre}] string tableJson,
 ```
+Use the data type that suits you best.
 
 ### Code Example: Input Binding
 
@@ -166,6 +167,8 @@ Two parameters are required for an output binding:
 [SQLDatabase(ConnectionString = "ConnectionString", TableName = "Book", SQLQuery = "")] ICollector<DataTable> output,
 ```
 
+Use the data type that suits you best.
+
 ### Supported Data Types
 
 Your [SQLDatabase] attribute should be followed by a variable, which can be either of these types:
@@ -189,37 +192,51 @@ Use whichever data type suits your work best.
 The example below adds book records. The function uses an HTTP Trigger and a SQL Database output binding. It accepts an HTTP POST payload of book objects, turns them into DataRows in a DataTable, and the output binding adds the records.
 
 ```
-[FunctionName("addbook")]
-public static HttpResponseMessage addbook(HttpRequestMessage req,
-    [HttpTrigger] AddBookRequest parameters, 
-    [SQLDatabase(ConnectionString = "ConnectionString", TableName = "Book")] ICollector&lt;DataTable&gt; output,
-    TraceWriter log)
+[FunctionName("addbooks")]
+public static HttpResponseMessage addbooks(HttpRequestMessage req, 
+    [HttpTrigger] Book[] books, 
+    [SQLDatabase(ConnectionString = "ConnectionString",
+                TableName = "Book", SQLQuery = "")] ICollector<DataSet> output, TraceWriter log)
 {
-    // Validate/default parameters
+        // Create data table JSON for output
 
-    if (string.IsNullOrEmpty(parameters.title)) parameters.title = "Noname-" + System.Guid.NewGuid().ToString();
-    if (string.IsNullOrEmpty(parameters.author)) parameters.author = null;
-    if (string.IsNullOrEmpty(parameters.yr)) parameters.yr = null;
-    if (string.IsNullOrEmpty(parameters.genre)) parameters.genre = null;
+    string json = @"[ ";
+    if (books != null)
+    {
+        int count = 0;
+        foreach (Book book in books)
+        {
+            if (count > 0) json += ",";
+            json += @"{ ""Title"": """ + book.title + @""", ""Author"": """ + book.author + @""", ""Yr"": """ + book.yr + @""", ""Genre"": """ + book.genre + @""" }";
+            count++;
+        }
+    }
+    json += "]";
 
-    // Create data table for output
-
-    DataTable table = new DataTable();
-    table.TableName = "Book";
-    table.Clear();
-    table.Columns.Add("Title");
-    table.Columns.Add("Author");
-    table.Columns.Add("Yr");
-    table.Columns.Add("Genre");
-    DataRow row = table.NewRow();
-    row["Title"] = parameters.title;
-    row["Author"] = parameters.author;
-    row["Yr"] = parameters.yr;
-    row["Genre"] = parameters.genre;
-    table.Rows.Add(row);
-
-    output.Add(table);
+    output.Add(json);
 
     return req.CreateResponse(HttpStatusCode.Created);
 }
 ```
+
+# Deployment
+
+Once you download or clone this repository, it is suggested you proceed as follows:
+
+1. Ensure you can build the solution 
+
+2. Try running the sample app locally. To do that, you'll first need to:
+
+   * Create an Azure DB for Books
+   * Run the included SQL script to create a Book table
+   * Set the ConnectionString parameter value for your books database in the Function App project's local.settings.json file.
+
+3. Reference SQLDatabaseExtension.dll in your Function App project.
+
+4. Add [SQLDatabase] attributes/parameters to your code, and a ConnectionString setting to your function project's local.settings.json file.
+
+5. Run and test/debug locally.
+
+6. Publish to Azure.
+
+7. In Azure Portal, navigate to your function's Application Settings area and add a ConnectionString parameter for your database.
