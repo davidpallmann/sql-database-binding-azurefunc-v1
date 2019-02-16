@@ -229,13 +229,16 @@ public static HttpResponseMessage addbook(HttpRequestMessage req,
 ## Running the Included Book Sample
 
 1. If you want to run the included sample, you will need to first do the following:
-a. Create an Azure SQL Database named Books.
-b. In SSMS, connect to the database and run the included script, CreateBookDatabase.sql. This will add a table named Book along with some data records.
-c. In the FunctionApp project in Visual Studio, edit the local.settings.json file and set the ConnectionString value to a connection string for your Books database.
 
-3. Swith to DEbug configuration.
+   * Create an Azure SQL Database named Books.
 
-4. Make sure FunctionApp is the start-up project (if insure, right-click FunctionApp in Solution Explorer and select Set as Startup Project).
+   * In SSMS, connect to the database and run the included script, CreateBookDatabase.sql. This will add a table named Book along with some data records.
+
+   * In the FunctionApp project in Visual Studio, edit the local.settings.json file and set the ConnectionString value to a connection string for your Books database.
+
+3. Swith to Debug configuration.
+
+4. Make sure **FunctionApp** is the start-up project (if unsure, right-click FunctionApp in Solution Explorer and select Set as Startup Project).
 
 5. Press F5 to run.
 
@@ -243,6 +246,8 @@ c. In the FunctionApp project in Visual Studio, edit the local.settings.json fil
 
 7. Once the function app initializes, you should see "Http Functions" and a list of functions and URLs similar to the following:
 
+
+```
 Http Functions:
 
         addbook: http://localhost:7071/api/addbook
@@ -254,6 +259,7 @@ Http Functions:
         title: http://localhost:7071/api/title
 
 Debugger listening on [::]:5858
+```
 
 8. Go to a browser and enter one of the following (be sure to use the base URLs that were displayed in Step 7)
 
@@ -277,6 +283,7 @@ For this test you will need something capable of sending an HTTP Post, such as I
 
 Post the following body to the addbooks URL http://localhost:7071/api/addbooks
 
+```
        [
           {
              "title": "Rendezvous with Rama",
@@ -315,6 +322,7 @@ Post the following body to the addbooks URL http://localhost:7071/api/addbooks
              "genre": "Science Fiction"
            }
         ]
+```
 
 New books should have been added, which you can see using the title or author search URLS mentioned earlier. Or, SELECT * FROM Book in SSMS.
 
