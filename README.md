@@ -31,7 +31,7 @@ public static HttpResponseMessage author(HttpRequestMessage req,
 
 ## Input Binding
 
-An input binding will perform a query and pass your function the query results as a DataTable. You can then work with the results by enumerating the DataRow items in the table.
+An input binding will perform a query and pass your function the query results as a DataTable. You can then work with the results by enumerating the DataRow items in the table. Or if you prefer, the data can be passed to your function as a JSON string.
 
 ### Parameters
 
@@ -54,16 +54,21 @@ The [SQLDatabase] attribute should be followed by a variable. This can be either
     [SQLDatabase(ConnectionString = "ConnectionString",
                  SQLQuery = "SELECT * FROM Book WHERE Genre={genre}"] DataTable table,
     
-    [FunctionName("author")]
-public static HttpResponseMessage author(HttpRequestMessage req,
-    [HttpTrigger] AuthorRequest parameters,
     [SQLDatabase(ConnectionString = "ConnectionString",
                  SQLQuery = "SELECT * FROM Book WHERE WHERE Genre={genre)"] string jsonTable,
 ````
 
 ### Code Example
 
+This example uses an HTTP Trigger and a SQL Database Input Binding that passes in a DataTable object:
+
 ```
+public class AuthorRequest
+{
+    public string name { get; set; }
+}
+...
+
 // DataTable edition - input binding passes a DataTable object with the query results
 
 [FunctionName("author")]
@@ -83,10 +88,30 @@ public static HttpResponseMessage author(HttpRequestMessage req,
     return req.CreateResponse(HttpStatusCode.OK, "{ Data: " + js + "}");
 }
 ```
+This example uses an HTTP Trigger and a SQL Database Input Binding that passes in a JSON string:
+
+```
+// JSON edition - input binding passes a JSON string with the query results
+
+[FunctionName("author")]
+public static HttpResponseMessage author(HttpRequestMessage req,
+    [HttpTrigger] AuthorRequest parameters,
+    [SQLDatabase(ConnectionString = "ConnectionString",
+                    SQLQuery = "SELECT * FROM Book WHERE Author LIKE CHAR(37)+'{name}'+CHAR(37)")] String jsonTable,
+    TraceWriter log)
+{
+    log.Info("author|json: C# HTTP trigger function processed a request.");
+
+    log.Info(jsonTable);
+
+    return req.CreateResponse(HttpStatusCode.OK, "{ Data: " + jsonTable + "}");
+}
+```
+
 
 ## Output Binding
 
-An output binding will take the output of your function (a data table) and add records to the specified data table.
+An output binding will take the output of your function (a data tableor JSON string) and add records to the specified data table.
 
 Records are added with SqlBulkCopy for high performance. Duplicate keys (records already in the table) are ignored and do not generate an error.
 
