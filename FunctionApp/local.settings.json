@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "AzureWebJobsDashboard": "",
+    "AzureWebJobs_ExtensionsPath": ".",
+    "ConnectionString": "...your-azure-sql-db-connection-string..."
+  }
+}
