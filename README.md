@@ -266,11 +266,13 @@ Debugger listening on [::]:5858
    * Title Search
 
 http://localhost:7071/api/title?title=progam should list books with "program" in their title
+
 http://localhost:7071/api/title?title=world should list books with "world" in their title
 
    * Author Search
 
 http://localhost:7071/api/author?name=smith should list books written by Cordwainer Smith
+
 http://localhost:7071/api/author?name=pallmann should list books written by David Pallmann
 
    * Add a Book
