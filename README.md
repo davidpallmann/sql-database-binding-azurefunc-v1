@@ -97,14 +97,14 @@ This example uses an HTTP Trigger and a SQL Database Input Binding that passes i
 public static HttpResponseMessage author(HttpRequestMessage req,
     [HttpTrigger] AuthorRequest parameters,
     [SQLDatabase(ConnectionString = "ConnectionString",
-                    SQLQuery = "SELECT * FROM Book WHERE Author LIKE CHAR(37)+'{name}'+CHAR(37)")] String jsonTable,
+                    SQLQuery = "SELECT * FROM Book WHERE Author LIKE CHAR(37)+'{name}'+CHAR(37)")] String jsTable,
     TraceWriter log)
 {
-    log.Info("author|json: C# HTTP trigger function processed a request.");
+    log.Info("author|js: C# HTTP trigger function processed a request.");
 
-    log.Info(jsonTable);
+    log.Info(jsTable);
 
-    return req.CreateResponse(HttpStatusCode.OK, "{ Data: " + jsonTable + "}");
+    return req.CreateResponse(HttpStatusCode.OK, "{ Data: " + jsTable + "}");
 }
 ```
 
