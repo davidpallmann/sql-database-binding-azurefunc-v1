@@ -16,7 +16,7 @@ To use the SQL Database binding, just add a [SQLDatabase] attribute to your func
 [FunctionName("genre")]
 public static HttpResponseMessage title(HttpRequestMessage req,
     [HttpTrigger] TitleRequest parameters, 
-    [SQLDatabase(ConnectionString = "ConnectionString", SQLQuery = "SELECT * FROM Book WHERE Genre={genre}] DataTable table,
+    [SQLDatabase(ConnectionString = "ConnectionString", SQLQuery = "SELECT * FROM Book WHERE Genre={genre}")] DataTable table,
     TraceWriter log)
 {
     // Convert data table to JSON string
@@ -45,10 +45,24 @@ When used as an input binding, the binding executes a query and passes the resul
 Two parameters are required for an input binding:
 
 * ConnnectionString: Name of connection string setting (such as "ConnectionString"). The actual connection string should be defined in local.settings.json (if running locally) or Application Settings in the Azure Portal.
+
+local.settings.json
+```
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "AzureWebJobsDashboard": "",
+    "AzureWebJobs_ExtensionsPath": ".",
+    "ConnectionString": "Server=my-server.database.windows.net;Database=Books;User ID=my-user;Password=my-password;Trusted_Connection=False;Encrypt=True;"
+  }
+}
+```
+
 * SQLQuery: A T-SQL query to execute. The results will be passed to your function.
 
 ```
-[SQLDatabase(ConnectionString = "ConnectionString", SQLQuery = "SELECT * FROM Book WHERE Genre={genre}] DataTable table,
+[SQLDatabase(ConnectionString = "ConnectionString", SQLQuery = "SELECT * FROM Book WHERE Genre={genre}")] DataTable table,
 ```
 
 SQLQuery parameters may contain {parameter} names. For example, an HTTP Trigger may pass in a query string parameter named title. If your SQLQuery parameter contains {title} it will be replaced with the incoming parameter value. 
@@ -80,9 +94,9 @@ Your [SQLDatabase] attribute should be followed by a variable, which can be eith
 Use whichever data type suits your work best.
 
 ```
-[SQLDatabase(ConnectionString = "ConnectionString", SQLQuery = "SELECT * FROM Book WHERE Genre={genre}] DataTable table,
+[SQLDatabase(ConnectionString = "ConnectionString", SQLQuery = "SELECT * FROM Book WHERE Genre={genre}")] DataTable table,
 
-[SQLDatabase(ConnectionString = "ConnectionString", SQLQuery = "SELECT * FROM Book WHERE Genre={genre}] string tableJson,
+[SQLDatabase(ConnectionString = "ConnectionString", SQLQuery = "SELECT * FROM Book WHERE Genre={genre}")] string tableJson,
 ```
 Use the data type that suits you best.
 
