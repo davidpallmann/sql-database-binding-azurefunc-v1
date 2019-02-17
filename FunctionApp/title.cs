@@ -36,7 +36,7 @@ namespace BookFunctionApp
         public static HttpResponseMessage title(HttpRequestMessage req,
             [HttpTrigger] TitleRequest parameters, 
             [SQLDatabase(ConnectionString = "ConnectionString",
-                         SQLQuery = "SELECT * FROM Book WHERE Title LIKE +CHAR(37)+'{title}'+CHAR(37)")]
+                         SQLQuery = "SELECT * FROM Book WHERE Title LIKE CHAR(37)+'{title}'+CHAR(37)")]
                 string jsonTable,
             TraceWriter log)
         {
@@ -57,7 +57,7 @@ namespace BookFunctionApp
         public static HttpResponseMessage title(HttpRequestMessage req,
             [HttpTrigger] TitleRequest parameters, 
             [SQLDatabase(ConnectionString = "ConnectionString",
-                         SQLQuery = "SELECT * FROM Book WHERE Title LIKE +CHAR(37)+'{title}'+CHAR(37)")]
+                         SQLQuery = "SELECT * FROM Book WHERE Title LIKE CHAR(37)+'{title}'+CHAR(37)")]
                 DataTable table,
             TraceWriter log)
         {
