@@ -1,6 +1,6 @@
 # SQLDatabase Binding for Azure Functions v1
 
-This is a binding for Azure Functions for Azure SQL Database. With it, cloud developers who use SQL Database can enjoy the same benefits that other binding users enjoy, includining minimal function code.
+This is a binding for Azure Functions for Azure SQL Database. With it, cloud developers who use SQL Database can enjoy the same benefits that other binding users enjoy, includining minimal function code. [blog post](http://davidpallmann.blogspot.com/2019/02/new-sql-database-binding-for-azure.html)
 
 This project builds SQLBindingExtension.dll which defines a new [SQLDatabase] binding attribute.
 
